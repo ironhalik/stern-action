@@ -1,0 +1,37 @@
+---
+name: "kubetail-action"
+description: "Lets you tail kubernetes logs"
+inputs:
+  debug:
+    description: "Adds action debug messages. Might contain sensitive data."
+    required: false
+  config:
+    description: "Kubeconfig yaml contents."
+    required: true
+  context:
+    description: "Context to use if there are multiple."
+    required: false
+  namespace:
+    description: "Namespace to deploy to. You can use env vars here."
+    required: false
+  search-term:
+    description: "What pods to tail."
+    required: false
+    default: "."
+  selector:
+    description: "kubectl selector to use for tailing pods."
+    required: false
+  since:
+    description: "Since when should we tail logs."
+    required: false
+    default: 5m
+  until:
+    description: "Will stop tailing when it finds the sepcified string."
+    required: false
+  timeout:
+    description: "How long to try tailing for."
+    required: false
+    default: 300s
+runs:
+  using: "docker"
+  image: "Dockerfile"
