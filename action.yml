@@ -1,19 +1,22 @@
 ---
-name: "kubetail-action"
+name: "stern-action"
 description: "Lets you tail kubernetes logs"
 inputs:
   debug:
     description: "Adds action debug messages. Might contain sensitive data."
     required: false
   config:
-    description: "Kubeconfig yaml contents."
-    required: true
+    description: "Kubeconfig yaml contents. Can be base64 encoded or just yaml."
+    required: false
+  eks_cluster:
+    description: "Name of the EKS cluster to interact with. Will use aws eks update-kubeconfig."
+    required: false
   context:
     description: "Context to use if there are multiple."
     required: false
   namespace:
     description: "Namespace to deploy to. You can use env vars here."
-    required: false
+    required: true
   search-term:
     description: "What pods to tail."
     required: false
