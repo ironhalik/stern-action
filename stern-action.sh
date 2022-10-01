@@ -1,34 +1,11 @@
-#!/bin/bash
-set -e
-set -o pipefail
-
-[ -n "${INPUT_DEBUG}" ] && RUNNER_DEBUG=1
-
-log_debug() {
-    echo -e "${*}" | sed 's/^/::debug:: /g'
-}
-
-if [ -n "${INPUT_CONFIG}" ]; then
-    if [[ "${INPUT_CONFIG}" =~ ^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$ ]]; then
-        log_debug "Looks like config is in base64. Decoding."
-        echo "${INPUT_CONFIG}" | base64 -d > /tmp/config
-    else
-        log_debug "Looks like config is plain yaml. Using it like it."
-        echo "${INPUT_CONFIG}" > /tmp/config
-    fi
-elif [ -n "${INPUT_EKS_CLUSTER}" ]; then
-    log_debug "Using AWS CLI to get the cluster config..."
-    aws_output=$(aws eks update-kubeconfig --name "${INPUT_EKS_CLUSTER}")
-    log_debug "${aws_output}"
-else
-    echo "::error:: Either config or eks_cluster must be specified."
+# This code is meant to be used with
+# https://github.com/ironhalik/kubectl-action-base
+if [ ! -n "${IS_KUBECTL_ACTION_BASE}" ]; then
+    echo "The script should be used on it's own!"
     exit 1
 fi
-if [ -n "${INPUT_CONTEXT}" ]; then
-    kubectl config set-context "${INPUT_CONTEXT}"
-fi
-log_debug "Current kubectl context: $(kubectl config current-context)"
 
+# kubectl-action specific code
 STERN_ARGS=""
 [ -n "${INPUT_SEARCH_TERM}" ] && STERN_ARGS="${STERN_ARGS} ${INPUT_SEARCH_TERM}"
 [ -n "${INPUT_NAMESPACE}" ] && STERN_ARGS="${STERN_ARGS} --namespace ${INPUT_NAMESPACE}"
