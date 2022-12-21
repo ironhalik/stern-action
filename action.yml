@@ -18,10 +18,10 @@ inputs:
   context:
     description: "Context to use if there are multiple."
     required: false
-  # stern-action specific inputs
   namespace:
-    description: "Namespace to deploy to. You can use env vars here."
-    required: true
+    description: "Namespace to use."
+    required: false
+  # stern-action specific inputs
   search-term:
     description: "What pods to tail."
     required: false
