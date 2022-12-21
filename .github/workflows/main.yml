@@ -1,0 +1,46 @@
+name: Build, scan, and publish the image
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+
+env:
+  LOCAL_IMAGE: stern-action:${{ github.sha }}
+
+jobs:
+  test-bats:
+    name: Run Bats Tests
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Build docker image
+        run: docker build --pull --tag ${{ env.LOCAL_IMAGE }} ./
+      - name: Run bats tests
+        run: |
+          docker run --rm \
+            --volume ${PWD}/:/code/ \
+            --workdir /code/ \
+            --entrypoint "" \
+            ${{ env.LOCAL_IMAGE }} \
+            ./test/bats/bin/bats ./test/
+
+  test-shellcheck:
+    name: Run Shellcheck
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: ShellCheck
+        uses: ludeeus/action-shellcheck@1.1.0
+        with:
+          ignore: Dockerfile test/lib/
