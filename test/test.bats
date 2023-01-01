@@ -18,7 +18,7 @@ teardown() {
 }
 
 @test "running with defaults" {
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "Running: stern  . --since 5m."
     assert_output --partial "the server could not find the requested resource"
     assert_success
@@ -26,7 +26,7 @@ teardown() {
 
 @test "custom search term" {
     export INPUT_SEARCH_TERM="some-dep-name"
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "Running: stern  some-dep-name --since 5m."
     assert_success
 }
@@ -34,21 +34,21 @@ teardown() {
 @test "custom search term (using env var)" {
     unset INPUT_SEARCH_TERM
     export SEARCH_TERM="some-dep-name"
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "Running: stern  some-dep-name --since 5m."
     assert_success
 }
 
 @test "custom since" {
     export INPUT_SINCE="60s"
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "Running: stern  . --since 60s."
     assert_success
 }
 
 @test "custom until" {
     export INPUT_UNTIL="app started"
-    run docker-entrypoint.sh
+    run kubectl-action.sh
     assert_output --partial "looking for string \"app started\""
     assert_failure
 }

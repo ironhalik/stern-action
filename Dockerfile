@@ -1,3 +1,3 @@
-FROM ghcr.io/ironhalik/kubectl-action-base:v1.0
+FROM ghcr.io/ironhalik/kubectl-action:v1.0
 
-COPY stern-action.sh /usr/local/bin/docker-entrypoint.d/
+COPY stern-action.sh /usr/local/bin/kubectl-action.d/
