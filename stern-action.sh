@@ -16,19 +16,22 @@ STERN_ARGS=""
 
 if [ -n "${UNTIL}" ]; then
     echo "Running: stern ${STERN_ARGS}, looking for string \"${UNTIL}\". Will timeout after ${TIMEOUT}."
+
     set +e
-    trap "" PIPE
     # shellcheck disable=SC2086
-    timeout "${TIMEOUT}" stern ${STERN_ARGS} 2>&1 | sed "/${UNTIL}/q"
-    status_codes=("${PIPESTATUS[@]}")
-    if [ "${status_codes[0]}" -eq 143 ]; then
+    timeout "${TIMEOUT}" sed "/${UNTIL}/q" < <(stern ${STERN_ARGS} 2>&1)
+    status=${?}
+    pkill stern
+
+    if [ "${status}" -eq 143 ]; then
         echo "Timed out while waiting for \"${UNTIL}\"."
         exit 2
-    elif [ "${status_codes[1]}" -eq 0 ]; then
+    elif [ "${status}" -eq 0 ]; then
         echo "\"${UNTIL}\" found."
         exit 0
     else
-        exit "$((status_codes[0] + status_codes[1]))"
+        echo "Something weird happened."
+        exit "${status}"
     fi
 else
     echo "Running: stern ${STERN_ARGS}. Will timeout after ${TIMEOUT}."
