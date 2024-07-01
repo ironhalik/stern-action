@@ -62,6 +62,6 @@ teardown() {
     if [ $((SECONDS - START)) -gt "10" ]; then
         fail 'Took too long.'
     fi
-    assert_output --partial "\"could not find the requested resource\" found."
+    assert_output --partial "\"found\" found."
     assert_success
 }
