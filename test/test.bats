@@ -20,7 +20,7 @@ teardown() {
 @test "running with defaults" {
     run kubectl-action.sh
     assert_output --partial "Running: stern  . --since 5m."
-    assert_output --partial "the server could not find the requested resource"
+    assert_output --partial "Not Found"
     assert_success
 }
 
@@ -56,7 +56,7 @@ teardown() {
 
 @test "string found" {
     export START="${SECONDS}"
-    export INPUT_UNTIL="could not find the requested resource"
+    export INPUT_UNTIL="Not Found"
     export INPUT_TIMEOUT="30s"
     run kubectl-action.sh
     if [ $((SECONDS - START)) -gt "10" ]; then
